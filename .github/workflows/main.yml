@@ -1,0 +1,29 @@
+name: pikpak_auto_invite
+on:
+  workflow_dispatch: # 允许手动触发工作流
+  push:
+    branches: [ main ]
+    paths:
+      - '**'
+      - '!.gitignore'
+      - '!README.md'
+  schedule:
+    # 每天晚六点十分执行一次
+    - cron:  '12 5 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Time
+        run: sudo timedatectl set-timezone 'Asia/Shanghai'
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - run: pip install -r requirements.txt
+      - name: Run
+        env:
+          INVITE_CODE: 89951934
+          PUSHPLUS_TOKEN: ${{secrets.PUSHPLUS_TOKEN}}
+        run: python main.py
